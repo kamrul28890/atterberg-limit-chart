@@ -2,16 +2,16 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from matplotlib.lines import Line2D
+import os
 
-# --- Custom Dataset ---
-data = {
-    'Sample': ['B-1', 'B-2', 'B-3', 'B-4', 'B-5', 'C-1', 'C-2', 'C-3',
-               'UST-1', 'P-1', 'P-2', 'P-3', 'P-4', 'P-5', 'S-1'],
-    'LL':     [47, 47, 53, 59, 55, 50, 50, 49, 51, 47, 43, 50, 48, 48, 52],
-    'PL':     [25, 26, 20, 21, 23, 20, 21, 19, 19, 19, 21, 25, 21, 26, 24]
-}
-df = pd.DataFrame(data)
+# --- Load data from Excel ---
+data_path = os.path.join('..', 'data', 'boring_data.xlsx')  # relative path from /src
+df = pd.read_excel(data_path)
+
+# Rename columns for consistency (optional)
+df.columns = ['Sample', 'LL', 'PL']
 df['PI'] = df['LL'] - df['PL']
+
 
 # --- Define A-line and U-line Equations ---
 def a_line(ll): return 0.73 * (ll - 20)

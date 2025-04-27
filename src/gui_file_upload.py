@@ -62,12 +62,13 @@ class FileUploadScreen(tk.Toplevel):
                 "LL (Liquid Limit)": "LL",
                 "PL (Plastic Limit)": "PL"
             })
-        except:
-            pass
+        except Exception as e:
+            pass  # If already correct, ignore
 
         required = {"Sample", "LL", "PL"}
         if not required.issubset(set(df.columns)):
-            messagebox.showerror("Invalid File", f"Missing required columns: {required}")
+            missing = required - set(df.columns)
+            messagebox.showerror("Invalid File", f"Missing required columns: {', '.join(missing)}")
             return
 
         self.df = df
@@ -112,7 +113,6 @@ class FileUploadScreen(tk.Toplevel):
         df["PI"] = df["LL"] - df["PL"]
 
         plot_chart(df)
-
 
 def launch_file_upload(master):
     FileUploadScreen(master)

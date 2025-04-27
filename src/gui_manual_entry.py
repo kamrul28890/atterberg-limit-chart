@@ -44,6 +44,9 @@ class ManualEntryScreen(tk.Toplevel):
         tk.Button(btn_frame, text="Generate Plot", command=self._generate_plot).pack(side="left", padx=5)
         tk.Button(btn_frame, text="Back", command=self.destroy).pack(side="left", padx=5)
 
+        # Bind Ctrl+V for pasting from clipboard
+        self.bind_all("<Control-v>", self._paste_from_clipboard)
+
     def _add_row(self):
         if len(self.entries) >= MAX_ROWS:
             messagebox.showwarning("Limit Reached", f"Maximum {MAX_ROWS} rows allowed.")
@@ -63,11 +66,26 @@ class ManualEntryScreen(tk.Toplevel):
         for widget in row_widgets:
             widget.destroy()
 
+    def _paste_from_clipboard(self, event=None):
+        try:
+            clipboard = self.clipboard_get()
+            rows = clipboard.strip().split('\n')
+            for r_idx, row in enumerate(rows):
+                if r_idx >= len(self.entries):
+                    self._add_row()
+                values = row.split('\t')
+                for c_idx, value in enumerate(values):
+                    if c_idx < 3:  # Only fill Sample, LL, PL
+                        self.entries[r_idx][c_idx].delete(0, tk.END)
+                        self.entries[r_idx][c_idx].insert(0, value.strip())
+        except Exception as e:
+            messagebox.showerror("Paste Error", f"Failed to paste data:\n{str(e)}")
+
     def _generate_plot(self):
         data = []
         for row in self.entries:
             values = [entry.get().strip() for entry in row]
-            if any(values):  # skip blank lines
+            if any(values):  # Skip blank lines
                 try:
                     sample, ll, pl = values[0], float(values[1]), float(values[2])
                     data.append({"Sample": sample, "LL": ll, "PL": pl})
@@ -82,7 +100,7 @@ class ManualEntryScreen(tk.Toplevel):
         df = pd.DataFrame(data)
         df["PI"] = df["LL"] - df["PL"]
 
-        plot_chart(df)  # Call the plot module
+        plot_chart(df)
 
 def launch_manual_entry(master):
     ManualEntryScreen(master)

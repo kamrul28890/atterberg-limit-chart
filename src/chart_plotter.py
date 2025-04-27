@@ -17,7 +17,7 @@ def plot_chart(df):
         ax.plot(A_ll, A_pi, color='darkorange', linestyle='-', linewidth=1.5, label="A-Line")
 
         # U-line
-        U_ll = ll_vals[u_line(ll_vals) >= 7]
+        U_ll = ll_vals[u_line(ll_vals) >= 7.3]
         U_pi = u_line(U_ll)
         ax.plot(U_ll, U_pi, color='green', linestyle='-', linewidth=1.5, label="U-Line")
 
@@ -48,7 +48,6 @@ def plot_chart(df):
         legend_elements = [
             Line2D([0], [0], color='darkorange', lw=2, label='A-Line'),
             Line2D([0], [0], color='green', lw=2, label='U-Line'),
-            Line2D([0], [0], color='black', lw=2, label='PI = 4 & 7.3')
         ]
         for i, row in df.iterrows():
             legend_elements.append(Line2D([0], [0], marker='o', color='w',

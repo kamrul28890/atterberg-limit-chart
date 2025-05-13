@@ -42,7 +42,7 @@ def plot_chart(df):
         colors = [cmap[i % len(cmap)] for i in range(len(df))]
         for i, row in df.iterrows():
             ax.scatter(row['LL'], row['PI'], color=colors[i], edgecolors='black', s=60, zorder=5)
-            ax.text(row['LL'] + 0.5, row['PI'] + 0.5, row['Sample'], fontsize=8)
+            #ax.text(row['LL'] + 0.5, row['PI'] + 0.5, row['Sample'], fontsize=8)
 
         # --- Legend ---
         legend_elements = [

@@ -45,7 +45,7 @@ class AtterbergChartApp:
         size = tuple(int(_) for _ in splash.geometry().split("+")[0].split("x"))
         x = w // 2 - size[0] // 2
         y = h // 2 - size[1] // 2
-        splash.geometry(f" +{x}+{y}")
+        splash.geometry(f"+{x}+{y}")
 
         # After short delay, destroy splash and show main window
         self.master.after(SPLASH_SCREEN_DELAY_MS, splash.destroy)

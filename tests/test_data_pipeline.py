@@ -1,8 +1,10 @@
+import io
 import unittest
 
 import pandas as pd
 
 from atterberg_limit_chart.data import dataframe_to_rows, evaluate_rows, parse_clipboard_rows
+from atterberg_limit_chart.plotting import create_atterberg_figure
 
 
 class DataPipelineTests(unittest.TestCase):
@@ -57,6 +59,25 @@ class DataPipelineTests(unittest.TestCase):
         self.assertEqual(evaluation.dataframe.iloc[0]["Sample"], "Sample 1")
         self.assertEqual(evaluation.dataframe.iloc[0]["PI"], 23.0)
         self.assertEqual(evaluation.dataframe.iloc[0]["Zone"], "CL")
+
+    def test_plotting_renders_to_png_buffer_with_reference_lines_and_ticks(self):
+        dataframe = pd.DataFrame(
+            [
+                {"Sample": "B-1", "LL": 48.0, "PL": 25.0, "PI": 23.0, "Zone": "CL or OL"},
+                {"Sample": "B-2", "LL": 61.0, "PL": 28.0, "PI": 33.0, "Zone": "CH or OH"},
+                {"Sample": "B-3", "LL": 72.0, "PL": 40.0, "PI": 32.0, "Zone": "CH or OH"},
+            ]
+        )
+
+        figure = create_atterberg_figure(dataframe)
+        axis = figure.axes[0]
+        buffer = io.BytesIO()
+        figure.savefig(buffer, format="png")
+
+        self.assertGreater(buffer.tell(), 0)
+        self.assertEqual(list(axis.get_xticks()), list(range(0, 101, 10)))
+        self.assertEqual(list(axis.get_yticks()), list(range(0, 61, 10)))
+        self.assertGreaterEqual(len(axis.lines), 4)
 
 
 if __name__ == "__main__":

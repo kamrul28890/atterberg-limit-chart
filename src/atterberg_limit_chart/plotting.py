@@ -16,15 +16,15 @@ AXIS_BACKGROUND = "#ffffff"
 GRID_COLOR = "#dddddd"
 ACCENT_ORANGE = "#c66f2c"
 ACCENT_GREEN = "#457b4e"
-REFERENCE_BROWN = "#7a6251"
+REFERENCE_BLUE = "#2b6cb0"
 GUIDE_COLOR = "#3b3027"
 CLML_FILL = "#f4f4f4"
 MARKERS = ("o", "s", "^", "D", "P", "X", "v", "<", ">", "h", "*", "p", "8")
 
 
-A_LINE_LEGEND = "A-Line: PI = 0.73(LL - 20), PI >= 4"
-U_LINE_LEGEND = "U-Line: PI = 0.90(LL - 8), PI >= 7.3"
-LL_PI_LEGEND = "LL = PI Line: PI = LL, 0 <= LL <= 60"
+A_LINE_LEGEND = "A-Line: PI = 0.73(LL - 20)"
+U_LINE_LEGEND = "U-Line: PI = 0.90(LL - 8)"
+LL_PI_LEGEND = "LL = PI Line: PI = LL"
 LL_40_LEGEND = "Vertical Guide: LL = 40"
 
 
@@ -53,7 +53,7 @@ def draw_atterberg_chart(figure: Figure, dataframe: pd.DataFrame) -> None:
 
     axis.plot(a_line_x, a_line_y, color=ACCENT_ORANGE, linewidth=2.0)
     axis.plot(u_line_x, u_line_y, color=ACCENT_GREEN, linewidth=2.0, linestyle=(0, (1.3, 2.0)))
-    axis.plot([0, CHART_Y_LIMIT[1]], [0, CHART_Y_LIMIT[1]], color=REFERENCE_BROWN, linewidth=1.2)
+    axis.plot([0, CHART_Y_LIMIT[1]], [0, CHART_Y_LIMIT[1]], color=REFERENCE_BLUE, linewidth=1.3)
     axis.axvline(x=50, color=GUIDE_COLOR, linewidth=1.2)
     axis.axvline(x=40, color=GUIDE_COLOR, linewidth=1.0, linestyle=(0, (1.5, 2.5)), alpha=0.85)
     axis.hlines(y=4, xmin=4, xmax=pi4_end, colors=GUIDE_COLOR, linewidth=1)
@@ -73,13 +73,14 @@ def draw_atterberg_chart(figure: Figure, dataframe: pd.DataFrame) -> None:
 
     _add_zone_labels(axis)
 
-    legend_items = [
+    line_legend_items = [
         Line2D([0], [0], color=ACCENT_ORANGE, lw=2, label=A_LINE_LEGEND),
         Line2D([0], [0], color=ACCENT_GREEN, lw=2, linestyle=(0, (1.3, 2.0)), label=U_LINE_LEGEND),
-        Line2D([0], [0], color=REFERENCE_BROWN, lw=1.2, label=LL_PI_LEGEND),
+        Line2D([0], [0], color=REFERENCE_BLUE, lw=1.3, label=LL_PI_LEGEND),
         Line2D([0], [0], color=GUIDE_COLOR, lw=1.0, linestyle=(0, (1.5, 2.5)), label=LL_40_LEGEND),
     ]
 
+    borehole_legend_items = []
     if dataframe.empty:
         message = axis.text(
             63,
@@ -106,7 +107,7 @@ def draw_atterberg_chart(figure: Figure, dataframe: pd.DataFrame) -> None:
                 s=72,
                 zorder=5,
             )
-            legend_items.append(
+            borehole_legend_items.append(
                 Line2D(
                     [0],
                     [0],
@@ -115,29 +116,49 @@ def draw_atterberg_chart(figure: Figure, dataframe: pd.DataFrame) -> None:
                     label=row["Sample"],
                     markerfacecolor=color,
                     markeredgecolor="#221c17",
-                    markersize=7.5,
+                    markersize=5.6,
                     linestyle="None",
                 )
             )
 
-    legend_columns = 2 if len(legend_items) > 14 else 1
-    legend = axis.legend(
-        handles=legend_items,
-        title="Legend",
+    line_legend = axis.legend(
+        handles=line_legend_items,
+        title="Reference Lines",
         loc="upper left",
         bbox_to_anchor=(0.015, 0.99),
         frameon=True,
         borderaxespad=0.0,
-        fontsize=6.9,
+        fontsize=6.8,
         title_fontsize=8,
-        handlelength=2.0,
+        handlelength=2.2,
         labelspacing=0.32,
         borderpad=0.5,
-        ncol=legend_columns,
     )
-    legend.get_frame().set_facecolor("#ffffff")
-    legend.get_frame().set_edgecolor("#cfcfcf")
-    legend.get_frame().set_alpha(0.96)
+    line_legend.get_frame().set_facecolor("#ffffff")
+    line_legend.get_frame().set_edgecolor("#cfcfcf")
+    line_legend.get_frame().set_alpha(0.96)
+    axis.add_artist(line_legend)
+
+    if borehole_legend_items:
+        borehole_columns = 2 if len(borehole_legend_items) > 12 else 1
+        borehole_legend = axis.legend(
+            handles=borehole_legend_items,
+            title="Boreholes",
+            loc="upper left",
+            bbox_to_anchor=(0.015, 0.74),
+            frameon=True,
+            borderaxespad=0.0,
+            fontsize=5.2,
+            title_fontsize=6.6,
+            handlelength=1.0,
+            handletextpad=0.4,
+            labelspacing=0.24,
+            borderpad=0.45,
+            ncol=borehole_columns,
+        )
+        borehole_legend.get_frame().set_facecolor("#ffffff")
+        borehole_legend.get_frame().set_edgecolor("#cfcfcf")
+        borehole_legend.get_frame().set_alpha(0.96)
 
     figure.subplots_adjust(left=0.09, right=0.98, bottom=0.12, top=0.9)
 

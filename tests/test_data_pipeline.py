@@ -81,9 +81,9 @@ class DataPipelineTests(unittest.TestCase):
         self.assertEqual(axis.get_facecolor()[:3], (1.0, 1.0, 1.0))
 
     def test_legend_equations_are_defined(self):
-        self.assertIn("PI = 0.73(LL - 20)", A_LINE_LEGEND)
-        self.assertIn("PI = 0.90(LL - 8)", U_LINE_LEGEND)
-        self.assertIn("PI = LL", LL_PI_LEGEND)
+        self.assertEqual(A_LINE_LEGEND, "A-Line: PI = 0.73(LL - 20)")
+        self.assertEqual(U_LINE_LEGEND, "U-Line: PI = 0.90(LL - 8)")
+        self.assertEqual(LL_PI_LEGEND, "LL = PI Line: PI = LL")
 
 
 if __name__ == "__main__":

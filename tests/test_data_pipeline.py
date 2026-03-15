@@ -4,7 +4,7 @@ import unittest
 import pandas as pd
 
 from atterberg_limit_chart.data import dataframe_to_rows, evaluate_rows, parse_clipboard_rows
-from atterberg_limit_chart.plotting import create_atterberg_figure
+from atterberg_limit_chart.plotting import A_LINE_LEGEND, LL_PI_LEGEND, U_LINE_LEGEND, create_atterberg_figure
 
 
 class DataPipelineTests(unittest.TestCase):
@@ -78,6 +78,12 @@ class DataPipelineTests(unittest.TestCase):
         self.assertEqual(list(axis.get_xticks()), list(range(0, 101, 10)))
         self.assertEqual(list(axis.get_yticks()), list(range(0, 61, 10)))
         self.assertGreaterEqual(len(axis.lines), 4)
+        self.assertEqual(axis.get_facecolor()[:3], (1.0, 1.0, 1.0))
+
+    def test_legend_equations_are_defined(self):
+        self.assertIn("PI = 0.73(LL - 20)", A_LINE_LEGEND)
+        self.assertIn("PI = 0.90(LL - 8)", U_LINE_LEGEND)
+        self.assertIn("PI = LL", LL_PI_LEGEND)
 
 
 if __name__ == "__main__":

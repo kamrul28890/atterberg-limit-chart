@@ -1,57 +1,57 @@
-# 🧪 Atterberg Limit Chart Generator
+# Atterberg Limit Chart Tool
 
-A full-featured Python desktop application to plot Atterberg Limits using soil sample data. Built with Tkinter and Matplotlib.  
+A refactored desktop workbench for preparing borehole Atterberg limit data, pasting tables from Excel, validating rows, and generating a ready-to-export plasticity chart.
 
-## 💡 Features
+## What it does
 
-- Enter data manually or upload `.xlsx` / `.csv` files
-- Calculates Plasticity Index (PI)
-- Plots A-Line, U-Line, PI threshold zones
-- Auto-labels soil classification zones (CL, CH, ML, MH, CL-ML)
-- Custom color for up to 20 soil samples
-- Export charts as high-resolution PNG
-- Standalone `.exe` version available
+- Pastes directly from Excel with `Ctrl+V` or the clipboard button.
+- Imports `.xlsx` and `.csv` files with flexible header mapping.
+- Lets you review and edit rows in one table.
+- Calculates `PI = LL - PL` automatically.
+- Tags each valid point by chart zone (`CL`, `CH`, `ML`, `MH`, `CL-ML`).
+- Shows validation notes for bad rows instead of silently failing.
+- Exports the cleaned dataset to Excel or CSV.
+- Saves the chart preview as a PNG.
+- Builds into a Windows executable with PyInstaller.
 
-## 📂 Directory Structure
+## Expected columns
 
-*   `src/main.py`: Main application entry point, handles the splash screen and main menu.
-*   `src/config.py`: Contains all configuration constants for the application, including GUI settings, font styles, and data handling parameters.
-*   `src/data_handler.py`: Manages reading and saving soil data from/to files.
-*   `src/chart_plotter.py`: Handles the logic for plotting the Atterberg Limit Chart.
-*   `src/gui_manual_entry.py`: Handles the GUI for manual data input.
-*   `src/gui_file_upload.py`: Handles the GUI for file upload.
-*   `requirements.txt`: Lists all Python dependencies.
+The app accepts these common names when importing files or pasted headers:
 
-## 🚀 How to Run
+- `Sample`, `Sample ID`, `Boring Name`, `Borehole`
+- `LL`, `Liquid Limit`, `LL (Liquid Limit)`
+- `PL`, `Plastic Limit`, `PL (Plastic Limit)`
 
-1.  **Clone the repository:**
-    ```bash
-    git clone https://github.com/kamrul28890/atterberg-limit-chart.git
-    cd atterberg-limit-chart
-    ```
-2.  **Install dependencies:**
-    It is recommended to use a virtual environment.
-    ```bash
-    python -m venv venv
-    source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
-    pip install -r requirements.txt
-    ```
-3.  **Run the application:**
-    ```bash
-    python src/main.py
-    ```
+If you paste plain Excel cells without headers, the app treats the first three columns as `Sample`, `LL`, and `PL`.
 
-## 🔧 Refactoring Highlights
+## Run from source
 
-*   **Centralized Configuration:** All configurable parameters are now in `src/config.py`, making it easier to modify and maintain.
-*   **Object-Oriented GUI:** The main application logic in `src/main.py` has been refactored into a class-based structure, improving modularity and readability.
-*   **Improved Data Handling:** `src/data_handler.py` now utilizes constants from `config.py` for column renaming and validation.
+```powershell
+.\.venv\Scripts\activate
+$env:PYTHONPATH = 'src'
+python src\main.py
+```
 
-## 🔮 Future Enhancements
+## Run tests
 
-*   Implement the plotting logic in `chart_plotter.py`.
-*   Add more robust error handling and user feedback.
-*   Improve the visual design of the GUI.
-*   Implement unit tests for core functionalities.
+```powershell
+$env:PYTHONPATH = 'src'
+python -m unittest discover -s tests -v
+```
 
+## Build the executable
 
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\build_exe.ps1
+```
+
+That produces a standalone executable at `dist\AtterbergLimitChart.exe`.
+
+## Project layout
+
+- `src/main.py`: desktop entrypoint.
+- `src/atterberg_limit_chart/data.py`: import, paste parsing, validation, export.
+- `src/atterberg_limit_chart/domain.py`: A-line, U-line, and zone logic.
+- `src/atterberg_limit_chart/plotting.py`: Matplotlib chart rendering.
+- `src/atterberg_limit_chart/app.py`: Tkinter workbench UI.
+- `tests/test_data_pipeline.py`: parsing and validation smoke tests.
